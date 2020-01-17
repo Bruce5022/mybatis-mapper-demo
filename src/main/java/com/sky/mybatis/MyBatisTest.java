@@ -15,7 +15,7 @@ public class MyBatisTest {
 
 
     public static void main(String[] args) throws Exception {
-        testDelete();
+        testAdd();
     }
 
 
@@ -35,7 +35,10 @@ public class MyBatisTest {
             person.setName("test01");
             person.setSex(0);
 
-            return t.addPerson(person);
+            System.out.println("执行前:"+person);
+            Integer integer = t.addPerson(person);
+            System.out.println("执行后:"+person);
+            return integer;
         }, PersonMapper.class, true);
 
         System.err.println("执行结果:" + result);
@@ -63,4 +66,24 @@ public class MyBatisTest {
     }
 
 
+    /**
+     * 把生成的主键赋值给返回对象中
+     * @throws Exception
+     */
+    public static void testInsert() throws Exception {
+
+        Integer result = DBUtils.invoke((t) -> {
+            Person person = new Person();
+            person.setEmail("test01@aliyun.com");
+            person.setBirthDay(new Date(1990, 2, 16));
+            person.setName("test01");
+            person.setSex(0);
+            System.out.println("执行前:"+person);
+            Integer integer = t.insertPerson(person);
+            System.out.println("执行后:"+person);
+            return integer;
+        }, PersonMapper.class, true);
+
+        System.err.println("执行结果:" + result);
+    }
 }

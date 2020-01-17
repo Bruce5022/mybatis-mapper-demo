@@ -11,8 +11,6 @@
 
     <!-- void addPerson(Person person);
     parameterType:可以省略
-
-
     -->
     <insert id="addPerson" parameterType="person" >
         insert into test_user (name,email,birth_day,sex) values (
@@ -30,5 +28,15 @@
     <delete id="deleteById" >
         delete from test_user  where id = #{id}
     </delete>
+
+    <!-- mysql支持主键自增,自增主键的获取,mybatis也是通过statement.getGeneratedKeys()
+        useGeneratedKeys:使用自增主键获取主键值策略
+        keyProperty:指定对应的主键属性,也就是mybatis获取到主键值后,将这个值封装给java bean的哪个属性
+    -->
+    <insert id="insertPerson" parameterType="person" useGeneratedKeys="true" keyProperty="id">
+        insert into test_user (name,email,birth_day,sex) values (
+        #{name},#{email},#{birthDay},#{sex}
+        )
+    </insert>
 
 </mapper>
