@@ -6,6 +6,11 @@ import com.sky.mybatis.model.Person;
 
 import java.sql.Date;
 
+/**
+ * 1.mybatis允许增,删,改,直接定义以下类型的返回值:Integer,Long,Boolean,这些直接在接口方法上定义写返回值类型就行,影响多少行就会返回
+ * 2.手工提交事务
+ */
+
 public class MyBatisTest {
 
 
@@ -57,12 +62,5 @@ public class MyBatisTest {
         System.err.println("执行结果:" + result);
     }
 
-
-    /**
-     * mybatis允许增,删,改,直接定义以下类型的返回值:Integer,Long,Boolean,这些直接在接口方法上定义写返回值类型就行,影响多少行就会返回
-     *
-     *
-     *
-     */
 
 }
