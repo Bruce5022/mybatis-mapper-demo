@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sky.mybatis.mapper.PersonMapper">
+    <select id="findById" resultType="person">
+    select * from test_user a where a.id = #{id}
+  </select>
+
+
+
+    <!-- void addPerson(Person person);
+    parameterType:可以省略
+
+
+    -->
+    <insert id="addPerson" parameterType="person" >
+        insert into test_user (name,email,birth_day,sex) values (
+        #{name},#{email},#{birthDay},#{sex}
+        )
+    </insert>
+
+    <!-- void updatePerson(Person person); -->
+    <update id="updatePerson">
+        update test_user set name= #{name}, email=#{email}, birth_day=#{birthDay}, sex=#{sex}
+        where id = #{id}
+    </update>
+
+    <!--void deleteById(Integer id);-->
+    <delete id="deleteById" >
+        delete from test_user  where id = #{id}
+    </delete>
+
+</mapper>
