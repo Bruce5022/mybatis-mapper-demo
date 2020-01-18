@@ -3,6 +3,7 @@ package com.sky.mybatis.mapper;
 import com.sky.mybatis.model.Person;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
 import java.util.Map;
 
 public interface PersonMapper {
@@ -28,6 +29,17 @@ public interface PersonMapper {
 
 
     Person findByMap(Map<String,Object> map);
+
+
+    /**
+     *
+     * 特别注意:如果是Collection(List,Set)类型或者是数组, 也会特殊处理.也是把传入的list或者数组封装在map中:
+     *      key为:
+     *          Collection--->collection
+     *          List---->list或array
+     * 取值:取出第一个id的值:#{list[0]}
+     */
+    Person findPerson(List<Integer> ids);
 
 
 }
