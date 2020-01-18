@@ -17,7 +17,7 @@ public class MyBatisTest {
 
 
     public static void main(String[] args) throws Exception {
-        testSelectByCondition();
+        testSelectByMap();
     }
 
 
@@ -35,8 +35,9 @@ public class MyBatisTest {
 
     public static void testSelectByMap() throws Exception {
         Map<String,Object> map = new HashMap<>();
-        map.put("name","test01");
+        map.put("name","'test01'");
         map.put("sex",0);
+        map.put("tableName","test_user");
         Person person = DBUtils.invoke((t) -> t.findByMap(map), PersonMapper.class);
         System.err.println("执行结果:" + person);
     }

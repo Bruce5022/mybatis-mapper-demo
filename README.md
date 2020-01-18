@@ -102,6 +102,123 @@ Person findPerson(List<Integer> ids);
 
 ##7.源码分析
 ```
+Person findByNameAndSex(@Param("name") String name, @Param("sex") Integer sex);
 
+ParamNameResolver解析参数封装map的:
+1.names:{0=name,1=sex}
+    a.获取每个标了@Param注解的参数的@Param值:name,sex;赋值给names;
+    b.每次解析一个参数给map中保存信息:key-参数索引,value-name的值'
+        name的值:
+            标注了param注解:注解的值
+            没有标注:
+                全局配置:useActualParamName(jdk1.8使用)
+                name=map.size():相当于当前元素的索引
+   如果还有第三个参数没有用@Param,那么names:{0=name,1=sex,2=2}
+                
+ public ParamNameResolver(Configuration config, Method method) {
+     final Class<?>[] paramTypes = method.getParameterTypes();
+     final Annotation[][] paramAnnotations = method.getParameterAnnotations();
+     final SortedMap<Integer, String> map = new TreeMap<>();
+     int paramCount = paramAnnotations.length;
+     // get names from @Param annotations
+     for (int paramIndex = 0; paramIndex < paramCount; paramIndex++) {
+       if (isSpecialParameter(paramTypes[paramIndex])) {
+         // skip special parameters
+         continue;
+       }
+       String name = null;
+       for (Annotation annotation : paramAnnotations[paramIndex]) {
+         if (annotation instanceof Param) {
+           hasParamAnnotation = true;
+           name = ((Param) annotation).value();
+           break;
+         }
+       }
+       if (name == null) {
+         // @Param was not specified.
+         if (config.isUseActualParamName()) {
+           name = getActualParamName(method, paramIndex);
+         }
+         if (name == null) {
+           // use the parameter index as the name ("0", "1", ...)
+           // gcode issue #71
+           name = String.valueOf(map.size());
+         }
+       }
+       map.put(paramIndex, name);
+     }
+     names = Collections.unmodifiableSortedMap(map);
+   }
+    
+
+  public Object getNamedParams(Object[] args) {
+    final int paramCount = names.size();
+    if (args == null || paramCount == 0) {
+      return null;
+    } else if (!hasParamAnnotation && paramCount == 1) {
+      return args[names.firstKey()];
+    } else {
+      final Map<String, Object> param = new ParamMap<>();
+      int i = 0;
+      for (Map.Entry<Integer, String> entry : names.entrySet()) {
+        param.put(entry.getValue(), args[entry.getKey()]);
+        // add generic param names (param1, param2, ...)
+        final String genericParamName = GENERIC_NAME_PREFIX + String.valueOf(i + 1);
+        // ensure not to overwrite parameter named with @Param
+        if (!names.containsValue(genericParamName)) {
+          param.put(genericParamName, args[entry.getKey()]);
+        }
+        i++;
+      }
+      return param;
+    }
+  }
 
 ```
+##8.取值方式差别
+```
+#{}:可以获取map中的值或者pojo对象属性的值;
+${}:同上;
+区别:
+#{}是以预编译的形式,将参数设置到sql语句中,PreparedStatement;防止sql注入;
+${}:取值的值直接拼装在sql语句中;会有安全问题;
+大多情况下,我们去取参数的值,都应该去使用#{};比如分库分表,按照年份分表拆分,原
+生jdbc不支持占位符的地方,我们就可以使用${}进行取值:
+select * from ${year}_salary where ***;
+select * from test_user order by ${name} ${desc} 
+
+
+
+
+
+
+
+1.修改映射文件语句
+<select id="findByMap" resultType="person">
+    select * from test_user a where a.name = ${name } and a.sex = #{sex}
+</select>
+
+运行结果:
+06:54:05,351 DEBUG PooledDataSource:334 - PooledDataSource forcefully closed/removed all connections.
+一月 19, 2020 6:54:05 上午 com.sky.mybatis.common.DBUtils invoke
+信息: Mapper类型:org.apache.ibatis.binding.MapperProxy@1fffcd7
+06:54:05,433 DEBUG JdbcTransaction:136 - Opening JDBC Connection
+06:54:07,037 DEBUG PooledDataSource:405 - Created connection 24231603.
+06:54:07,037 DEBUG JdbcTransaction:100 - Setting autocommit to false on JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@171beb3]
+06:54:07,086 DEBUG findByMap:143 - ==>  Preparing: select * from test_user a where a.name = test01 and a.sex = ? 
+06:54:07,112 DEBUG findByMap:143 - ==> Parameters: 0(Integer)
+06:54:07,176 DEBUG JdbcTransaction:122 - Resetting autocommit to true on JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@171beb3]
+Exception in thread "main" org.apache.ibatis.exceptions.PersistenceException: 
+06:54:07,218 DEBUG JdbcTransaction:90 - Closing JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@171beb3]
+06:54:07,219 DEBUG PooledDataSource:362 - Returned connection 24231603 to pool.
+### Error querying database.  Cause: java.sql.SQLSyntaxErrorException: Unknown column 'test01' in 'where clause'
+### The error may exist in mapper/PersonMapper.xml
+### The error may involve defaultParameterMap
+### The error occurred while setting parameters
+### SQL: select * from test_user a where a.name = test01 and a.sex = ?
+### Cause: java.sql.SQLSyntaxErrorException: Unknown column 'test01' in 'where clause'
+
+解决办法: map.put("name","'test01'");
+
+```
+
