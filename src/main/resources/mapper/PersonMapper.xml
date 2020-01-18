@@ -8,6 +8,17 @@
   </select>
 
 
+    <!-- Person findByNameAndSex(String name, Integer sex); -->
+    <select id="findByNameAndSex" resultType="person">
+    select * from test_user a where a.name = #{name } and a.sex = #{sex}
+  </select>
+
+    <!--Person findByMap(Map<String,Object> map);-->
+    <select id="findByMap" resultType="person">
+    select * from test_user a where a.name = #{name } and a.sex = #{sex}
+  </select>
+
+
 
     <!-- void addPerson(Person person);
     parameterType:可以省略

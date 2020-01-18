@@ -5,6 +5,8 @@ import com.sky.mybatis.mapper.PersonMapper;
 import com.sky.mybatis.model.Person;
 
 import java.sql.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 1.mybatis允许增,删,改,直接定义以下类型的返回值:Integer,Long,Boolean,这些直接在接口方法上定义写返回值类型就行,影响多少行就会返回
@@ -15,12 +17,27 @@ public class MyBatisTest {
 
 
     public static void main(String[] args) throws Exception {
-        testAdd();
+        testSelectByMap();
     }
 
 
     public static void testSelect() throws Exception {
         Person person = DBUtils.invoke((t) -> t.findById(2), PersonMapper.class);
+        System.err.println("执行结果:" + person);
+    }
+
+
+    public static void testSelectByCondition() throws Exception {
+        Person person = DBUtils.invoke((t) -> t.findByNameAndSex("test01",0), PersonMapper.class);
+        System.err.println("执行结果:" + person);
+    }
+
+
+    public static void testSelectByMap() throws Exception {
+        Map<String,Object> map = new HashMap<>();
+        map.put("name","test01");
+        map.put("sex",0);
+        Person person = DBUtils.invoke((t) -> t.findByMap(map), PersonMapper.class);
         System.err.println("执行结果:" + person);
     }
 
