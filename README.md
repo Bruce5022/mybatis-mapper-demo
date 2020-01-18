@@ -61,6 +61,13 @@ Person findByNameAndSex(@Param("name") String name, @Param("sex") Integer sex);
 
 ##4.Map
 ```
-如果多个参数不是业务模型中的数据,没有对应的pojo,为了方便,我们也可以传入map:
+如果多个参数不是业务模型中的数据,没有对应的pojo,也不经常使用,为了方便,我们也可以传入map:
     #{key}:取出map中对应的值
 ```
+
+##5.TO
+```如果多个参数不是业务模型中的数据,但是经常要使用,推荐来编写一个TO(Transfer Object)
+page{
+int index;
+int size;
+}```
