@@ -222,3 +222,17 @@ Exception in thread "main" org.apache.ibatis.exceptions.PersistenceException:
 
 ```
 
+##9.#{}取值进一步说明
+```
+参数可以指定特殊的类型:
+#{property,javaType=int,jdbcType=numeric}
+#{property,javaType=double,jdbcType=numeric,numericScale=2}
+
+1.javaType通常可以从java对象中来确定;
+2.如果null被当作值来传递,对于所有可能为空的列,jdbcType需要被设置;
+3.对于数值类型的值,还可以指定小数点后的位数;
+4.mode属性允许指定in,out或inout参数,如果参数为out或inout,参数对象的真实值将会被改变,就像在获取输出参数时所期望的那样;
+5.参数位置支持的属性:javaType,jdbcType,mode(存储过程用到),numericScale,resultMap,typeHandler,jdbcTypeName,expression(未来支持的功能)
+6.实际上通被设置的是:可能为空的列名指定jdbcType,在我们数据为null的时候,有些数据库可能不能识别mybatis对null的默认处理,比如oracle数据库,如果传null并没指定jdbcType,oracle会报错
+
+```
