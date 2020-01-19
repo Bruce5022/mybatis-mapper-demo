@@ -28,6 +28,9 @@ public interface PersonMapper {
     Person findByNameAndSex(@Param("name") String name, @Param("sex") Integer sex);
 
 
+    List<Person> findAllByName(@Param("name") String name);
+
+
     Person findByMap(Map<String,Object> map);
 
 

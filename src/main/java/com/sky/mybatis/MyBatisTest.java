@@ -6,6 +6,7 @@ import com.sky.mybatis.model.Person;
 
 import java.sql.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -17,7 +18,7 @@ public class MyBatisTest {
 
 
     public static void main(String[] args) throws Exception {
-        testSelectByMap();
+        testSelectAll();
     }
 
 
@@ -30,6 +31,12 @@ public class MyBatisTest {
     public static void testSelectByCondition() throws Exception {
         Person person = DBUtils.invoke((t) -> t.findByNameAndSex("test01",0), PersonMapper.class);
         System.err.println("执行结果:" + person);
+    }
+
+
+    public static void testSelectAll() throws Exception {
+        List<Person> persons = DBUtils.invoke((t) -> t.findAllByName("test01"), PersonMapper.class);
+        System.err.println("执行结果:" + persons);
     }
 
 
