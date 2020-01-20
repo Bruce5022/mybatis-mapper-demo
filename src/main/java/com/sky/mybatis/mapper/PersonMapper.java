@@ -1,6 +1,7 @@
 package com.sky.mybatis.mapper;
 
 import com.sky.mybatis.model.Person;
+import org.apache.ibatis.annotations.MapKey;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -45,4 +46,12 @@ public interface PersonMapper {
     Person findPerson(List<Integer> ids);
 
 
+
+    // 返回map,key是列名,值为值
+    Map<String,Object> findPersonToMap(Integer id);
+
+
+    // 返回map,key是id,值为对象
+    @MapKey("id")
+    Map<String,Person> findPerson2Map(Integer id);
 }

@@ -18,7 +18,7 @@ public class MyBatisTest {
 
 
     public static void main(String[] args) throws Exception {
-        testSelectAll();
+        testSelect2Map();
     }
 
 
@@ -36,6 +36,16 @@ public class MyBatisTest {
 
     public static void testSelectAll() throws Exception {
         List<Person> persons = DBUtils.invoke((t) -> t.findAllByName("test01"), PersonMapper.class);
+        System.err.println("执行结果:" + persons);
+    }
+
+    public static void testSelectMap() throws Exception {
+        Map<String,Object> persons = DBUtils.invoke((t) -> t.findPersonToMap(1), PersonMapper.class);
+        System.err.println("执行结果:" + persons);
+    }
+
+    public static void testSelect2Map() throws Exception {
+        Map<String,Person> persons = DBUtils.invoke((t) -> t.findPerson2Map(1), PersonMapper.class);
         System.err.println("执行结果:" + persons);
     }
 
